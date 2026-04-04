@@ -3,6 +3,25 @@ package crypto.toolkit;
 import java.security.Key;
 
 public class App {
+
+    public void symEncryptFile(String inputFilePath, String outputFilePath, String keyFilePath) {
+        try {
+            toolkit.sym_encrypt_file(inputFilePath, outputFilePath, keyFilePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error encrypting file");
+        }
+    }
+
+    public void symDecryptFile(String inputFilePath, String outputFilePath, String keyFilePath) {
+        try {
+            toolkit.sym_decrypt_file(inputFilePath, outputFilePath, keyFilePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error decrypting file");
+        }
+    }
+
     public String getGreeting() {
         try {
             Key key = toolkit.read_sym_key("1.txt");
@@ -29,6 +48,7 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        new App().symEncryptFile("inputMsg.txt", "encryptedOutputMsg.txt", "1.txt");
+        new App().symDecryptFile("encryptedOutputMsg.txt", "decryptedOutputMsg.txt", "1.txt");
     }
 }

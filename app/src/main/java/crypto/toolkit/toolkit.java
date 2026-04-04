@@ -13,6 +13,22 @@ public class toolkit {
 
     /** Symmetric cryptography algorithm. */
 
+    public static void sym_encrypt_file(String inputFilePath, String outputFilePath, String keyFilePath) throws Exception {
+        byte[] fileData = helpingTools.readFileToByteArray(inputFilePath);
+        Key key = read_sym_key(keyFilePath);
+        String encryptedHex = sym_encrypt_str(new String(fileData), key);
+
+        helpingTools.writeByteArrayToFile(outputFilePath, encryptedHex.getBytes());
+    }
+
+    public static void sym_decrypt_file(String inputFilePath, String outputFilePath, String keyFilePath) throws Exception {
+        byte[] encryptedData = helpingTools.readFileToByteArray(inputFilePath);
+        Key key = read_sym_key(keyFilePath);
+        String decryptedStr = sym_decrypt_str(new String(encryptedData), key);
+        
+        helpingTools.writeByteArrayToFile(outputFilePath, decryptedStr.getBytes());
+    }
+
     // Str + Key -> Encrypted Str (Hex)
     public static String sym_encrypt_str(String plaintext, Key key) throws Exception {
         Cipher cipher = Cipher.getInstance(SYM_CIPHER);
