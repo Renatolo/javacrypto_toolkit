@@ -4,6 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 public class helpingTools {
+
+    private final static String DIGEST_ALGO = "SHA-256";
+
     public static String toHex(byte[] data) {
         StringBuilder sb = new StringBuilder();
         for (byte b : data) {
@@ -22,6 +25,14 @@ public class helpingTools {
         return data;
     }
 
+    public static String digestMessage(String message) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(message.getBytes("UTF-8"));
+        return toHex(hash);
+    }
+
+    // File I/O utilities
+
     public static byte[] readFileToByteArray(String filePath) throws Exception {
         System.out.println("Reading key from file " + filePath + " ...");
 		FileInputStream fis = new FileInputStream(filePath);
@@ -36,4 +47,25 @@ public class helpingTools {
         fos.write(data);
         fos.close();
     }
+
+    // Json File I/O utilities
+
+    public static List<String> readJsonFile(String filePath) throws Exception {
+        FileReader reader = new FileReader(filePath);
+        JsonParser parser = new JsonParser();
+        return parser.parse(reader).getAsJsonArray().asList();
+    }
+
+    public static void writeJsonToFile(String filePath, String secret, String signature) throws Exception {
+        JsonObject json = new JsonObject();
+        json.addProperty("secret", secret);
+        json.addProperty("signature", signature);
+
+        FileWriter writer = new FileWriter(filePath);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        gson.toJson(json, writer);
+        writer.flush();
+        writer.close();
+    }
+
 }

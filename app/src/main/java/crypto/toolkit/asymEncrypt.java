@@ -3,7 +3,7 @@ package crypto.toolkit;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-public class asymEncryptTools {
+public class asymEncrypt {
     static final String ASYM_ALGORITHM = "RSA";
     static final String ASYM_CIPHER = "RSA/ECB/PKCS1Padding";
 

@@ -6,7 +6,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 
-public class toolkit {
+public class symEncrypt {
 
     private static final String SYM_ALGORITHM = "AES";
     private static final String SYM_CIPHER = "AES/CBC/PKCS5Padding";
@@ -35,7 +35,8 @@ public class toolkit {
     }
 
     // Str + Key -> Encrypted Str (Hex)
-    public static String sym_encrypt_str(String plaintext, Key key) throws Exception {
+    public static String sym_encrypt_str(String plaintext, String keyFilePath) throws Exception {
+        Key key = read_sym_key(keyFilePath);
         Cipher cipher = Cipher.getInstance(SYM_CIPHER);
         
         cipher.init(Cipher.ENCRYPT_MODE, key);
