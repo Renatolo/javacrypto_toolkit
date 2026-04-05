@@ -11,7 +11,12 @@ public class toolkit {
     private static final String SYM_ALGORITHM = "AES";
     private static final String SYM_CIPHER = "AES/CBC/PKCS5Padding";
 
-    /** Symmetric cryptography algorithm. */
+    public static void generate_sym_key(String keyFilePath) throws Exception {
+        KeyGenerator keyGen = KeyGenerator.getInstance(SYM_ALGORITHM);
+        keyGen.init(128); // AES-128
+        Key key = keyGen.generateKey();
+        helpingTools.writeByteArrayToFile(keyFilePath, key.getEncoded());
+    }
 
     public static void sym_encrypt_file(String inputFilePath, String outputFilePath, String keyFilePath) throws Exception {
         byte[] fileData = helpingTools.readFileToByteArray(inputFilePath);
