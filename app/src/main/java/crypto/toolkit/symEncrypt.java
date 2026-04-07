@@ -20,17 +20,15 @@ public class symEncrypt {
 
     public static void sym_encrypt_file(String inputFilePath, String outputFilePath, String keyFilePath) throws Exception {
         byte[] fileData = helpingTools.readFileToByteArray(inputFilePath);
-        Key key = read_sym_key(keyFilePath);
-        String encryptedHex = sym_encrypt_str(new String(fileData), key);
+        String encryptedHex = sym_encrypt_str(new String(fileData), keyFilePath);
 
         helpingTools.writeByteArrayToFile(outputFilePath, encryptedHex.getBytes());
     }
 
     public static void sym_decrypt_file(String inputFilePath, String outputFilePath, String keyFilePath) throws Exception {
         byte[] encryptedData = helpingTools.readFileToByteArray(inputFilePath);
-        Key key = read_sym_key(keyFilePath);
-        String decryptedStr = sym_decrypt_str(new String(encryptedData), key);
-        
+        String decryptedStr = sym_decrypt_str(new String(encryptedData), keyFilePath);
+
         helpingTools.writeByteArrayToFile(outputFilePath, decryptedStr.getBytes());
     }
 
@@ -53,7 +51,8 @@ public class symEncrypt {
     }
 
     // Encrypted Str (Hex) + Key -> Decrypted String
-    public static String sym_decrypt_str(String encryptedHex, Key key) throws Exception {
+    public static String sym_decrypt_str(String encryptedHex, String keyFilePath) throws Exception {
+        Key key = read_sym_key(keyFilePath);
         byte[] combined = helpingTools.hexStringToByteArray(encryptedHex);
 
         byte[] iv = new byte[16];

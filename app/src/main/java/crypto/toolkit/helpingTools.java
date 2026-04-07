@@ -2,6 +2,15 @@ package crypto.toolkit;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.security.MessageDigest;
+import java.security.Key;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class helpingTools {
 
@@ -26,7 +35,7 @@ public class helpingTools {
     }
 
     public static String digestMessage(String message) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance(DIGEST_ALGO);
         byte[] hash = digest.digest(message.getBytes("UTF-8"));
         return toHex(hash);
     }
@@ -35,25 +44,31 @@ public class helpingTools {
 
     public static byte[] readFileToByteArray(String filePath) throws Exception {
         System.out.println("Reading key from file " + filePath + " ...");
-		FileInputStream fis = new FileInputStream(filePath);
-		byte[] encoded = new byte[fis.available()];
-		fis.read(encoded);
-		fis.close();
-        return encoded;
+        try (FileInputStream fis = new FileInputStream(filePath)) {
+            byte[] data = new byte[fis.available()];
+            fis.read(data);
+            return data;
+        }
     }
 
     public static void writeByteArrayToFile(String filePath, byte[] data) throws Exception {
-        FileOutputStream fos = new FileOutputStream(filePath);
-        fos.write(data);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(data);
+        }
     }
 
     // Json File I/O utilities
 
-    public static List<String> readJsonFile(String filePath) throws Exception {
-        FileReader reader = new FileReader(filePath);
-        JsonParser parser = new JsonParser();
-        return parser.parse(reader).getAsJsonArray().asList();
+    public static String[] readJsonFile(String filePath) throws Exception {
+        try (FileReader reader = new FileReader(filePath)) {
+            // Use the static parseReader instead of 'new JsonParser()'
+            JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            
+            return new String[]{
+                json.get("secret").getAsString(),
+                json.get("signature").getAsString()
+            };
+        }
     }
 
     public static void writeJsonToFile(String filePath, String secret, String signature) throws Exception {
@@ -61,11 +76,11 @@ public class helpingTools {
         json.addProperty("secret", secret);
         json.addProperty("signature", signature);
 
-        FileWriter writer = new FileWriter(filePath);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        gson.toJson(json, writer);
-        writer.flush();
-        writer.close();
+        // Using try-with-resources to ensure the file closes properly
+        try (FileWriter writer = new FileWriter(filePath)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(json, writer);
+        }
     }
 
 }
