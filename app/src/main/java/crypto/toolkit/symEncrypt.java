@@ -11,11 +11,16 @@ public class symEncrypt {
     private static final String SYM_ALGORITHM = "AES";
     private static final String SYM_CIPHER = "AES/CBC/PKCS5Padding";
 
-    public static void generate_sym_key(String keyFilePath) throws Exception {
-        KeyGenerator keyGen = KeyGenerator.getInstance(SYM_ALGORITHM);
-        keyGen.init(128); // AES-128
-        Key key = keyGen.generateKey();
-        helpingTools.writeByteArrayToFile(keyFilePath, key.getEncoded());
+    public static void generate_sym_key(String keyFilePath) {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance(SYM_ALGORITHM);
+            keyGen.init(128); // AES-128
+            Key key = keyGen.generateKey();
+            helpingTools.writeByteArrayToFile(keyFilePath, key.getEncoded());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating symmetric key");
+        }
     }
 
     public static void sym_encrypt_file(String inputFilePath, String outputFilePath, String keyFilePath) throws Exception {

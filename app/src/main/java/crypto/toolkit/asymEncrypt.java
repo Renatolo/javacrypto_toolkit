@@ -3,7 +3,9 @@ package crypto.toolkit;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.KeyPair;
 import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.Cipher;
@@ -11,6 +13,23 @@ import javax.crypto.Cipher;
 public class asymEncrypt {
     static final String ASYM_ALGORITHM = "RSA";
     static final String ASYM_CIPHER = "RSA/ECB/PKCS1Padding";
+
+    public static void generate_asym_key_pair(String keyFilePath) {
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048);
+            KeyPair keys = keyGen.generateKeyPair();
+
+            byte[] privKeyEncoded = keys.getPrivate().getEncoded();
+            byte[] pubKey = keys.getPublic().getEncoded();
+
+            helpingTools.writeByteArrayToFile(keyFilePath + ".priv", privKeyEncoded);
+            helpingTools.writeByteArrayToFile(keyFilePath + ".pub", pubKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error generating asymmetric key pair");
+        }
+    }
 
     public static String asym_sign(String plaintext, String privateKeyPath) {
         // read the private key
