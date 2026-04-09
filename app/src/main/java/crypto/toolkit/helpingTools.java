@@ -43,7 +43,6 @@ public class helpingTools {
     // File I/O utilities
 
     public static byte[] readFileToByteArray(String filePath) throws Exception {
-        System.out.println("Reading key from file " + filePath + " ...");
         try (FileInputStream fis = new FileInputStream(filePath)) {
             byte[] data = new byte[fis.available()];
             fis.read(data);

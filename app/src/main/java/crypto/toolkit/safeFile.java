@@ -25,8 +25,6 @@ public class safeFile {
             String secret = jsonData[0];
             String signature = jsonData[1];
 
-            System.out.println("Secret (encrypted): " + secret);
-
             String message = symEncrypt.sym_decrypt_str(secret, keyFilePath);
             String digest = helpingTools.digestMessage(message);
 
@@ -35,7 +33,7 @@ public class safeFile {
                 helpingTools.writeByteArrayToFile(outputFilePath, message.getBytes());
                 System.out.println("File decrypted and signature verified successfully");
             } else {
-                System.out.println("Signature verification failed. File may be tampered.");
+                System.out.println("[WARNING]Signature verification failed. File may be tampered.");
             }
         } catch (Exception e) {
             e.printStackTrace();

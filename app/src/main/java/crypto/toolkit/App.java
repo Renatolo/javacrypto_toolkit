@@ -1,62 +1,88 @@
 package crypto.toolkit;
 
-import java.security.Key;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Parameters;
 
-public class App {
+@Command(name = "ctk", mixinStandardHelpOptions = true) 
+public class App implements Runnable {
 
-    private static final String helpText = "Usage: java -jar CryptoToolkit.jar <command> [args]\n" +
-            "Commands:\n" +
-            "  help - Show this help message\n" +
-            "  gen-sym-key <keyFilePath> - Generate a symmetric key and save to file\n" +
-            "  gen-asym-key <keyFilePath> - Generate an asymmetric key pair and save to files\n" +
-            "  protect-file <inputFilePath> <outputFilePath> <keyFilePath> <privKeyPath> - Encrypt a file and sign it\n" +
-            "  unprotect-file <inputFilePath> <outputFilePath> <keyFilePath> <pubKeyPath> - Decrypt a file and verify its signature";
+    @Override
+    public void run() {
+        // Default action when no subcommand is provided
+    }
 
     public static void main(String[] args) {
-        System.out.println(args.length + " args provided");
-        System.out.println("args: " + String.join(", ", args));
+        CommandLine cmd = new CommandLine(new App());
+        
+        // Add subcommands manually here
+        cmd.addSubcommand("gen-sym-key", new GenSymKey());
+        cmd.addSubcommand("gen-asym-key", new GenAsymKey());
+        cmd.addSubcommand("protect-file", new ProtectFile());
+        cmd.addSubcommand("unprotect-file", new UnprotectFile());
+        
+        System.exit(cmd.execute(args));
+    }
 
-        if (args.length < 1) {
-            System.out.println("No command provided. Exiting.");
-            return;
+    @Command(name = "gen-sym-key", description = "Generate a symmetric key and save to file")
+    public static class GenSymKey implements Runnable {
+        @Parameters(index = "0", description = "Path to the key file")
+        private String keyFilePath;
+
+        @Override
+        public void run() {
+            symEncrypt.generate_sym_key(keyFilePath);
         }
+    }
 
-        String command = args[0];
-        switch(command) {
-            case "help":
-                System.out.println(helpText);
-                break;
-            case "gen-sym-key":
-                if (args.length < 2) {
-                    System.out.println("Usage: gen-sym-key <keyFilePath>");
-                    return;
-                }
-                symEncrypt.generate_sym_key(args[1]);
-                break;
-            case "gen-asym-key":
-                if (args.length < 2) {
-                    System.out.println("Usage: gen-asym-key <keyFilePath>");
-                    return;
-                }
-                asymEncrypt.generate_asym_key_pair(args[1]);
-                break;
-            case "protect-file":
-                if (args.length < 5) {
-                    System.out.println("Usage: protect-file <inputFilePath> <outputFilePath> <keyFilePath> <privKeyPath>");
-                    return;
-                }
-                safeFile.protectFile(args[1], args[2], args[3], args[4]);
-                break;
-            case "unprotect-file":
-                if (args.length < 5) {
-                    System.out.println("Usage: unprotect-file <inputFilePath> <outputFilePath> <keyFilePath> <pubKeyPath>");
-                    return;
-                }
-                safeFile.unprotectFile(args[1], args[2], args[3], args[4]);
-                break;
-            default:
-                System.out.println("Unknown command: " + command);
-                System.out.println("Use 'help' command for usage instructions.");
+    @Command(name = "gen-asym-key", description = "Generate an asymmetric key pair and save to files")
+    public static class GenAsymKey implements Runnable {
+        @Parameters(index = "0", description = "Path to the key file")
+        private String keyFilePath;
+
+        @Override
+        public void run() {
+            asymEncrypt.generate_asym_key_pair(keyFilePath);
+        }
+    }
+
+    @Command(name = "protect-file", description = "Encrypt a file and sign it")
+    public static class ProtectFile implements Runnable {
+        @Parameters(index = "0", description = "Input file path")
+        private String inputFilePath;
+
+        @Parameters(index = "1", description = "Output file path")
+        private String outputFilePath;
+
+        @Parameters(index = "2", description = "Key file path")
+        private String keyFilePath;
+
+        @Parameters(index = "3", description = "Private key path")
+        private String privKeyPath;
+
+        @Override
+        public void run() {
+            safeFile.protectFile(inputFilePath, outputFilePath, keyFilePath, privKeyPath);
+        }
+    }
+
+    @Command(name = "unprotect-file", description = "Decrypt a file and verify its signature")
+    public static class UnprotectFile implements Runnable {
+        @Parameters(index = "0", description = "Input file path")
+        private String inputFilePath;
+
+        @Parameters(index = "1", description = "Output file path")
+        private String outputFilePath;
+
+        @Parameters(index = "2", description = "Key file path")
+        private String keyFilePath;
+
+        @Parameters(index = "3", description = "Public key path")
+        private String pubKeyPath;
+
+        @Override
+        public void run() {
+            safeFile.unprotectFile(inputFilePath, outputFilePath, keyFilePath, pubKeyPath);
         }
     }
 }

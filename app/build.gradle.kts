@@ -24,6 +24,7 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("info.picocli:picocli:4.7.5")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -36,6 +37,7 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "crypto.toolkit.App"
+    applicationName = "cryptoTK"
 }
 
 tasks.named<Test>("test") {
