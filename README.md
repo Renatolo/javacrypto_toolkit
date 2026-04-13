@@ -1,4 +1,4 @@
-# CryptoToolkit (v0.9)
+# CryptoToolkit (v1.0)
 
 A lightweight Java-based CLI for symmetric and asymmetric cryptography, built with Gradle and picocli. This tool allows for secure file protection using AES-256 and RSA signature verification.
 
